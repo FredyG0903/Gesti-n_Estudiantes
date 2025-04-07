@@ -12,7 +12,7 @@
     </div>
 
     <div class="row mt-5">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-primary mb-3">
                 <div class="card-body text-center">
                     <h2 class="card-title">{{ total_estudiantes|default:"0" }}</h2>
@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-success mb-3">
                 <div class="card-body text-center">
                     <h2 class="card-title">{{ estudiantes_activos|default:"0" }}</h2>
@@ -28,11 +28,82 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-warning mb-3">
                 <div class="card-body text-center">
                     <h2 class="card-title">{{ estudiantes_inactivos|default:"0" }}</h2>
                     <p class="card-text">Estudiantes Inactivos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ total_carreras|default:"0" }}</h2>
+                    <p class="card-text">Total de Carreras</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Últimas Carreras</h5>
+                </div>
+                <div class="card-body">
+                    {% if carreras %}
+                        <div class="list-group">
+                            {% for carrera in carreras %}
+                                <a href="{% url 'carrera-detail' carrera.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ carrera.nombre }}</h6>
+                                        <small>{{ carrera.cursos.count }} cursos</small>
+                                    </div>
+                                    <p class="mb-1">{{ carrera.descripcion|truncatewords:15 }}</p>
+                                    <small>Duración: {{ carrera.duracion }} semestres</small>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No hay carreras registradas.
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'carrera-list' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-list"></i> Ver Todas las Carreras
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Últimos Cursos</h5>
+                </div>
+                <div class="card-body">
+                    {% if cursos %}
+                        <div class="list-group">
+                            {% for curso in cursos %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ curso.nombre }}</h6>
+                                        <small>{{ curso.creditos }} créditos</small>
+                                    </div>
+                                    <p class="mb-1">Código: {{ curso.codigo }}</p>
+                                    <small>Semestre: {{ curso.semestre }} - Carrera: {{ curso.carrera.nombre }}</small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No hay cursos registrados.
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -46,6 +117,9 @@
                     <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                         <a href="{% url 'estudiante-create' %}" class="btn btn-primary me-md-2">
                             <i class="fas fa-user-plus"></i> Agregar Nuevo Estudiante
+                        </a>
+                        <a href="{% url 'carrera-create' %}" class="btn btn-success me-md-2">
+                            <i class="fas fa-plus"></i> Agregar Nueva Carrera
                         </a>
                         <a href="{% url 'estudiante-list' %}" class="btn btn-secondary">
                             <i class="fas fa-list"></i> Ver Lista de Estudiantes

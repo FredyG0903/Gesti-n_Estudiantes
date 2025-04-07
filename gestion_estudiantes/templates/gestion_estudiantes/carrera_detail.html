@@ -40,7 +40,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Cursos por Semestre</h5>
-                    <a href="#" class="btn btn-primary btn-sm">
+                    <a href="{% url 'curso-create' carrera.pk %}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Agregar Curso
                     </a>
                 </div>
@@ -75,10 +75,10 @@
                                                         <td>{{ curso.creditos }}</td>
                                                         <td>
                                                             <div class="btn-group btn-group-sm">
-                                                                <a href="#" class="btn btn-warning">
+                                                                <a href="{% url 'curso-update' curso.pk %}" class="btn btn-warning">
                                                                     <i class="fas fa-edit"></i>
                                                                 </a>
-                                                                <a href="#" class="btn btn-danger">
+                                                                <a href="{% url 'curso-delete' curso.pk %}" class="btn btn-danger">
                                                                     <i class="fas fa-trash"></i>
                                                                 </a>
                                                             </div>
@@ -106,39 +106,84 @@
                     <h5 class="mb-0">Estudiantes Matriculados</h5>
                 </div>
                 <div class="card-body">
-                    {% if estudiantes %}
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Situación</th>
-                                        <th>Fecha de Registro</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for estudiante in estudiantes %}
-                                    <tr>
-                                        <td>{{ estudiante.nombre }}</td>
-                                        <td>
-                                            <span class="badge {% if estudiante.situacion == 'Activo' %}bg-success{% else %}bg-warning{% endif %}">
-                                                {{ estudiante.situacion }}
-                                            </span>
-                                        </td>
-                                        <td>{{ estudiante.fecha_registro|date:"d/m/Y" }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info">
-                            No hay estudiantes matriculados en esta carrera.
-                        </div>
-                    {% endif %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Situación</th>
+                                    <th>Fecha de Registro</th>
+                                    <th>Cursos Asignados</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estudiante in carrera.estudiantes.all %}
+                                <tr>
+                                    <td>{{ estudiante.nombre }}</td>
+                                    <td>
+                                        <span class="badge {% if estudiante.situacion == 'Activo' %}bg-success{% else %}bg-warning{% endif %}">
+                                            {{ estudiante.situacion }}
+                                        </span>
+                                    </td>
+                                    <td>{{ estudiante.fecha_registro|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#cursos-{{ estudiante.pk }}" aria-expanded="false">
+                                            Ver Cursos ({{ estudiante.cursos.count }})
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'asignar-curso' estudiante.pk %}" class="btn btn-primary">
+                                                <i class="fas fa-plus"></i> Asignar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="p-0">
+                                        <div class="collapse" id="cursos-{{ estudiante.pk }}">
+                                            <div class="card card-body m-2">
+                                                {% if estudiante.cursos.all %}
+                                                    <table class="table table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Curso</th>
+                                                                <th>Código</th>
+                                                                <th>Créditos</th>
+                                                                <th>Semestre</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for curso in estudiante.cursos.all %}
+                                                            <tr>
+                                                                <td>{{ curso.nombre }}</td>
+                                                                <td>{{ curso.codigo }}</td>
+                                                                <td>{{ curso.creditos }}</td>
+                                                                <td>{{ curso.semestre }}</td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                {% else %}
+                                                    <p class="mb-0">No hay cursos asignados.</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No hay estudiantes matriculados en esta carrera.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

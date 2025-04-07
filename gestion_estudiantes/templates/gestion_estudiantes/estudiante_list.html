@@ -21,6 +21,7 @@
                         <th>Fecha de nacimiento</th>
                         <th>Sexo</th>
                         <th>Situación</th>
+                        <th>Carrera</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -36,18 +37,24 @@
                                 {{ estudiante.situacion }}
                             </span>
                         </td>
+                        <td>{{ estudiante.carrera.nombre }}</td>
                         <td>
-                            <a href="{% url 'estudiante-update' estudiante.pk %}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <a href="{% url 'estudiante-delete' estudiante.pk %}" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </a>
+                            <div class="btn-group">
+                                <a href="{% url 'estudiante-detail' estudiante.pk %}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                                <a href="{% url 'estudiante-update' estudiante.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="{% url 'estudiante-delete' estudiante.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center">No hay estudiantes registrados.</td>
+                        <td colspan="7" class="text-center">No hay estudiantes registrados.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

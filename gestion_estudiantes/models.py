@@ -35,23 +35,26 @@ class Estudiante(models.Model):
     SEXO_CHOICES = [
         ('M', 'Masculino'),
         ('F', 'Femenino'),
+        ('O', 'Otro')
     ]
     
     SITUACION_CHOICES = [
         ('Activo', 'Activo'),
-        ('Inactivo', 'Inactivo'),
+        ('Inactivo', 'Inactivo')
     ]
     
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=100)
     fecha_nacimiento = models.DateField()
     sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
     situacion = models.CharField(max_length=10, choices=SITUACION_CHOICES, default='Activo')
-    carrera = models.ForeignKey(Carrera, on_delete=models.SET_NULL, null=True, related_name='estudiantes')
-    fecha_registro = models.DateTimeField(auto_now_add=True)
-    
+    fecha_registro = models.DateField(auto_now_add=True)
+    carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, related_name='estudiantes')
+    cursos = models.ManyToManyField(Curso, related_name='estudiantes', blank=True)
+
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Estudiante'
         verbose_name_plural = 'Estudiantes'
+        ordering = ['nombre']
