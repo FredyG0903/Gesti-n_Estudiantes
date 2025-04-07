@@ -1,0 +1,144 @@
+{% extends 'gestion_estudiantes/base.html' %}
+
+{% block title %}{{ carrera.nombre }} - Detalles{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>{{ carrera.nombre }}</h2>
+            <p class="lead">{{ carrera.descripcion }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="btn-group" role="group">
+                <a href="{% url 'carrera-update' carrera.pk %}" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+                <a href="{% url 'carrera-delete' carrera.pk %}" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Eliminar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Información General</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Duración:</strong> {{ carrera.duracion }} semestres</li>
+                        <li><strong>Fecha de creación:</strong> {{ carrera.fecha_creacion|date:"d/m/Y" }}</li>
+                        <li><strong>Total de cursos:</strong> {{ carrera.cursos.count }}</li>
+                        <li><strong>Total de estudiantes:</strong> {{ carrera.estudiantes.count }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Cursos por Semestre</h5>
+                    <a href="#" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Agregar Curso
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% regroup cursos by semestre as cursos_por_semestre %}
+                    {% if cursos_por_semestre %}
+                        <div class="accordion" id="accordionCursos">
+                            {% for semestre in cursos_por_semestre %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#semestre{{ semestre.grouper }}">
+                                        Semestre {{ semestre.grouper }} ({{ semestre.list|length }} cursos)
+                                    </button>
+                                </h2>
+                                <div id="semestre{{ semestre.grouper }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Código</th>
+                                                        <th>Nombre</th>
+                                                        <th>Créditos</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for curso in semestre.list %}
+                                                    <tr>
+                                                        <td>{{ curso.codigo }}</td>
+                                                        <td>{{ curso.nombre }}</td>
+                                                        <td>{{ curso.creditos }}</td>
+                                                        <td>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <a href="#" class="btn btn-warning">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </a>
+                                                                <a href="#" class="btn btn-danger">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No hay cursos registrados para esta carrera.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Estudiantes Matriculados</h5>
+                </div>
+                <div class="card-body">
+                    {% if estudiantes %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Situación</th>
+                                        <th>Fecha de Registro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for estudiante in estudiantes %}
+                                    <tr>
+                                        <td>{{ estudiante.nombre }}</td>
+                                        <td>
+                                            <span class="badge {% if estudiante.situacion == 'Activo' %}bg-success{% else %}bg-warning{% endif %}">
+                                                {{ estudiante.situacion }}
+                                            </span>
+                                        </td>
+                                        <td>{{ estudiante.fecha_registro|date:"d/m/Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No hay estudiantes matriculados en esta carrera.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
