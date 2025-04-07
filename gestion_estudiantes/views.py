@@ -1,11 +1,29 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .models import Estudiante, Curso
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
+
+def inicio(request):
+    try:
+        total_estudiantes = Estudiante.objects.count()
+        estudiantes_activos = Estudiante.objects.filter(situacion='Activo').count()
+        estudiantes_inactivos = Estudiante.objects.filter(situacion='Inactivo').count()
+    except Exception as e:
+        total_estudiantes = 0
+        estudiantes_activos = 0
+        estudiantes_inactivos = 0
+        messages.error(request, f'Error al cargar las estadísticas: {str(e)}')
+
+    context = {
+        'total_estudiantes': total_estudiantes,
+        'estudiantes_activos': estudiantes_activos,
+        'estudiantes_inactivos': estudiantes_inactivos,
+    }
+    return render(request, 'gestion_estudiantes/inicio.html', context)
 
 class EstudianteListView(ListView):
     model = Estudiante
