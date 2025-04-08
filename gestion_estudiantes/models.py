@@ -71,13 +71,14 @@ class Nota(models.Model):
             MaxValueValidator(100)
         ]
     )
-    fecha_registro = models.DateField(auto_now_add=True)
+    fecha_registro = models.DateTimeField(auto_now=True)
     observaciones = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.estudiante.nombre} - {self.curso.nombre}: {self.nota}"
 
     class Meta:
         verbose_name = 'Nota'
         verbose_name_plural = 'Notas'
         unique_together = ['estudiante', 'curso']  # Un estudiante solo puede tener una nota por curso
-
-    def __str__(self):
-        return f"{self.estudiante.nombre} - {self.curso.nombre}: {self.nota}"
+        ordering = ['-fecha_registro']
