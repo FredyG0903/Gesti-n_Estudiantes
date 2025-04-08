@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, FormView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .models import Estudiante, Curso, Carrera
+from .models import Estudiante, Curso, Carrera, Nota
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
 
@@ -88,7 +88,18 @@ class EstudianteListView(ListView):
     model = Estudiante
     template_name = 'gestion_estudiantes/estudiante_list.html'
     context_object_name = 'estudiantes'
-    ordering = ['nombre']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        estudiante_id = self.request.GET.get('id')
+        if estudiante_id:
+            queryset = queryset.filter(id=estudiante_id)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['estudiante_id'] = self.request.GET.get('id', '')
+        return context
 
 class EstudianteCreateView(CreateView):
     model = Estudiante
@@ -210,3 +221,74 @@ class AsignarCursoView(FormView):
     
     def get_success_url(self):
         return reverse_lazy('estudiante-detail', kwargs={'pk': self.estudiante.pk})
+
+class NotaForm(forms.ModelForm):
+    class Meta:
+        model = Nota
+        fields = ['nota', 'observaciones']
+        widgets = {
+            'nota': forms.NumberInput(attrs={
+                'class': 'form-control', 
+                'step': '0.01',
+                'min': '0',
+                'max': '100',
+                'placeholder': 'Ingrese una nota entre 0 y 100'
+            }),
+            'observaciones': forms.Textarea(attrs={
+                'class': 'form-control', 
+                'rows': 3,
+                'placeholder': 'Observaciones opcionales'
+            }),
+        }
+        help_texts = {
+            'nota': 'Ingrese una nota entre 0 y 100 puntos.',
+        }
+
+class NotaCreateView(CreateView):
+    model = Nota
+    form_class = NotaForm
+    template_name = 'gestion_estudiantes/nota_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.estudiante = get_object_or_404(Estudiante, pk=self.kwargs['estudiante_pk'])
+        self.curso = get_object_or_404(Curso, pk=self.kwargs['curso_pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['estudiante'] = self.estudiante
+        context['curso'] = self.curso
+        return context
+
+    def form_valid(self, form):
+        form.instance.estudiante = self.estudiante
+        form.instance.curso = self.curso
+        messages.success(self.request, 'Nota registrada exitosamente.')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('carrera-detail', kwargs={'pk': self.estudiante.carrera.pk})
+
+class NotaUpdateView(UpdateView):
+    model = Nota
+    form_class = NotaForm
+    template_name = 'gestion_estudiantes/nota_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['estudiante'] = self.object.estudiante
+        context['curso'] = self.object.curso
+        context['is_update'] = True
+        return context
+
+    def get_success_url(self):
+        messages.success(self.request, 'Nota actualizada exitosamente.')
+        return reverse_lazy('estudiante-detail', kwargs={'pk': self.object.estudiante.pk})
+
+class NotaDeleteView(DeleteView):
+    model = Nota
+    template_name = 'gestion_estudiantes/nota_confirm_delete.html'
+
+    def get_success_url(self):
+        messages.success(self.request, 'Nota eliminada exitosamente.')
+        return reverse_lazy('estudiante-detail', kwargs={'pk': self.object.estudiante.pk})

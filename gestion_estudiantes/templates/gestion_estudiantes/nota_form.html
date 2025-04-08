@@ -2,34 +2,38 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-    {% if form.instance.pk %}Editar Nota{% else %}Nueva Nota{% endif %}
+    {% if is_update %}
+        Editar Nota - {{ estudiante.nombre }} - {{ curso.nombre }}
+    {% else %}
+        Registrar Nota - {{ estudiante.nombre }} - {{ curso.nombre }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title mb-0">
-                        {% if form.instance.pk %}
+                    <h5 class="card-title mb-0">
+                        {% if is_update %}
                             Editar Nota
                         {% else %}
-                            Nueva Nota para {{ estudiante.nombre }}
+                            Registrar Nota
                         {% endif %}
-                    </h3>
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <form method="post" novalidate>
+                    <div class="mb-3">
+                        <h6>Estudiante: {{ estudiante.nombre }}</h6>
+                        <h6>Curso: {{ curso.nombre }} ({{ curso.codigo }})</h6>
+                    </div>
+                    <form method="post">
                         {% csrf_token %}
                         {{ form|crispy }}
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                            <a href="{% url 'estudiante-detail' estudiante.pk %}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Guardar
-                            </button>
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="{% url 'estudiante-detail' estudiante.pk %}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
                     </form>
                 </div>

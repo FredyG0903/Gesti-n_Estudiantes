@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <div class="row mt-5">
+    <div class="row mt-5 display-flex justify-content-center">
         <div class="col-md-3">
             <div class="card text-white bg-primary mb-3">
                 <div class="card-body text-center">
@@ -44,71 +44,17 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">Últimas Carreras</h5>
-                </div>
-                <div class="card-body">
-                    {% if carreras %}
-                        <div class="list-group">
-                            {% for carrera in carreras %}
-                                <a href="{% url 'carrera-detail' carrera.pk %}" class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{ carrera.nombre }}</h6>
-                                        <small>{{ carrera.cursos.count }} cursos</small>
-                                    </div>
-                                    <p class="mb-1">{{ carrera.descripcion|truncatewords:15 }}</p>
-                                    <small>Duración: {{ carrera.duracion }} semestres</small>
-                                </a>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info">
-                            No hay carreras registradas.
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="card-footer">
-                    <a href="{% url 'carrera-list' %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-list"></i> Ver Todas las Carreras
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5 class="card-title mb-0">Últimos Cursos</h5>
-                </div>
-                <div class="card-body">
-                    {% if cursos %}
-                        <div class="list-group">
-                            {% for curso in cursos %}
-                                <div class="list-group-item">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{ curso.nombre }}</h6>
-                                        <small>{{ curso.creditos }} créditos</small>
-                                    </div>
-                                    <p class="mb-1">Código: {{ curso.codigo }}</p>
-                                    <small>Semestre: {{ curso.semestre }} - Carrera: {{ curso.carrera.nombre }}</small>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info">
-                            No hay cursos registrados.
-                        </div>
-                    {% endif %}
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body text-center">
+                    <h2 class="card-title">{{ total_cursos|default:"0" }}</h2>
+                    <p class="card-text">Total de Cursos</p>
                 </div>
             </div>
         </div>
     </div>
 
+    
     <div class="row mt-4">
         <div class="col-md-12">
             <div class="card">

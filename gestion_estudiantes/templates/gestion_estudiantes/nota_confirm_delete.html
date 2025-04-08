@@ -5,29 +5,25 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card">
-                <div class="card-header bg-danger text-white">
-                    <h3 class="card-title mb-0">Confirmar Eliminación</h3>
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Eliminar Nota</h5>
                 </div>
                 <div class="card-body">
-                    <p class="lead">¿Estás seguro de que deseas eliminar la nota de {{ nota.estudiante.nombre }} en el curso {{ nota.curso.nombre }}?</p>
+                    <p>¿Estás seguro de que deseas eliminar la nota de {{ object.estudiante.nombre }} 
+                       para el curso {{ object.curso.nombre }}?</p>
                     
                     <div class="alert alert-warning">
-                        <h4 class="alert-heading">¡Atención!</h4>
-                        <p>Esta acción eliminará la nota registrada.</p>
-                        <p class="mb-0">Esta acción no se puede deshacer.</p>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Esta acción no se puede deshacer.
                     </div>
 
                     <form method="post">
                         {% csrf_token %}
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{% url 'estudiante-detail' nota.estudiante.pk %}" class="btn btn-secondary me-md-2">
-                                <i class="fas fa-times"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="{% url 'estudiante-detail' object.estudiante.pk %}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
                         </div>
                     </form>
                 </div>

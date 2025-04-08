@@ -113,7 +113,7 @@
                                     <th>Nombre</th>
                                     <th>Situación</th>
                                     <th>Fecha de Registro</th>
-                                    <th>Cursos Asignados</th>
+                                    <th>Cursos y Notas</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -126,7 +126,7 @@
                                             {{ estudiante.situacion }}
                                         </span>
                                     </td>
-                                    <td>{{ estudiante.fecha_registro|date:"d/m/Y" }}</td>
+                                    <td>{{ estudiante.fecha_registro|date:"d/m/Y H:i" }}</td>
                                     <td>
                                         <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" 
                                                 data-bs-target="#cursos-{{ estudiante.pk }}" aria-expanded="false">
@@ -136,7 +136,7 @@
                                     <td>
                                         <div class="btn-group btn-group-sm">
                                             <a href="{% url 'asignar-curso' estudiante.pk %}" class="btn btn-primary">
-                                                <i class="fas fa-plus"></i> Asignar
+                                                <i class="fas fa-plus"></i> Asignar Curso
                                             </a>
                                         </div>
                                     </td>
@@ -153,6 +153,8 @@
                                                                 <th>Código</th>
                                                                 <th>Créditos</th>
                                                                 <th>Semestre</th>
+                                                                <th>Nota</th>
+                                                                <th>Acciones</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -162,6 +164,33 @@
                                                                 <td>{{ curso.codigo }}</td>
                                                                 <td>{{ curso.creditos }}</td>
                                                                 <td>{{ curso.semestre }}</td>
+                                                                <td>
+                                                                    {% with nota=curso.notas.filter.first %}
+                                                                        {% if nota %}
+                                                                            {{ nota.nota }}
+                                                                        {% else %}
+                                                                            Sin nota
+                                                                        {% endif %}
+                                                                    {% endwith %}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        {% with nota=curso.notas.filter.first %}
+                                                                            {% if nota %}
+                                                                                <a href="{% url 'nota-update' nota.pk %}" class="btn btn-warning">
+                                                                                    <i class="fas fa-edit"></i>
+                                                                                </a>
+                                                                                <a href="{% url 'nota-delete' nota.pk %}" class="btn btn-danger">
+                                                                                    <i class="fas fa-trash"></i>
+                                                                                </a>
+                                                                            {% else %}
+                                                                                <a href="{% url 'nota-create' estudiante.pk curso.pk %}" class="btn btn-success">
+                                                                                    <i class="fas fa-plus"></i> Agregar Nota
+                                                                                </a>
+                                                                            {% endif %}
+                                                                        {% endwith %}
+                                                                    </div>
+                                                                </td>
                                                             </tr>
                                                             {% endfor %}
                                                         </tbody>

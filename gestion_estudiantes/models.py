@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
@@ -47,7 +48,7 @@ class Estudiante(models.Model):
     fecha_nacimiento = models.DateField()
     sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
     situacion = models.CharField(max_length=10, choices=SITUACION_CHOICES, default='Activo')
-    fecha_registro = models.DateField(auto_now_add=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
     carrera = models.ForeignKey(Carrera, on_delete=models.CASCADE, related_name='estudiantes')
     cursos = models.ManyToManyField(Curso, related_name='estudiantes', blank=True)
 
@@ -58,3 +59,25 @@ class Estudiante(models.Model):
         verbose_name = 'Estudiante'
         verbose_name_plural = 'Estudiantes'
         ordering = ['nombre']
+
+class Nota(models.Model):
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE, related_name='notas')
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='notas')
+    nota = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100)
+        ]
+    )
+    fecha_registro = models.DateField(auto_now_add=True)
+    observaciones = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Nota'
+        verbose_name_plural = 'Notas'
+        unique_together = ['estudiante', 'curso']  # Un estudiante solo puede tener una nota por curso
+
+    def __str__(self):
+        return f"{self.estudiante.nombre} - {self.curso.nombre}: {self.nota}"

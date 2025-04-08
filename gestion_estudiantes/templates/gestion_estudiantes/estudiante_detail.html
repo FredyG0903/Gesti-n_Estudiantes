@@ -5,19 +5,9 @@
 {% block content %}
 <div class="container">
     <div class="row mb-4">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <h2>{{ estudiante.nombre }}</h2>
             <p class="lead">Estudiante de {{ estudiante.carrera.nombre }}</p>
-        </div>
-        <div class="col-md-4 text-end">
-            <div class="btn-group" role="group">
-                <a href="{% url 'estudiante-update' estudiante.pk %}" class="btn btn-warning">
-                    <i class="fas fa-edit"></i> Editar
-                </a>
-                <a href="{% url 'estudiante-delete' estudiante.pk %}" class="btn btn-danger">
-                    <i class="fas fa-trash"></i> Eliminar
-                </a>
-            </div>
         </div>
     </div>
 
@@ -34,7 +24,7 @@
                                 {{ estudiante.situacion }}
                             </span>
                         </li>
-                        <li><strong>Fecha de Registro:</strong> {{ estudiante.fecha_registro|date:"d/m/Y" }}</li>
+                        <li><strong>Fecha de Registro:</strong> {{ estudiante.fecha_registro|date:"d/m/Y H:i" }}</li>
                         <li><strong>Carrera:</strong> {{ estudiante.carrera.nombre }}</li>
                     </ul>
                 </div>
@@ -43,22 +33,20 @@
 
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Cursos Asignados</h5>
-                    <a href="{% url 'asignar-curso' estudiante.pk %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus"></i> Asignar Curso
-                    </a>
+                <div class="card-header">
+                    <h5 class="mb-0">Cursos y Notas</h5>
                 </div>
                 <div class="card-body">
                     {% if estudiante.cursos.all %}
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Código</th>
                                         <th>Nombre</th>
                                         <th>Créditos</th>
                                         <th>Semestre</th>
+                                        <th>Nota</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -68,6 +56,15 @@
                                         <td>{{ curso.nombre }}</td>
                                         <td>{{ curso.creditos }}</td>
                                         <td>{{ curso.semestre }}</td>
+                                        <td>
+                                            {% with nota=curso.notas.filter.first %}
+                                                {% if nota %}
+                                                    {{ nota.nota }}
+                                                {% else %}
+                                                    Sin nota
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
